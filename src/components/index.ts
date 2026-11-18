@@ -4,6 +4,7 @@ export { Input } from './Input';
 export { Card } from './Card';
 export { TransactionItem } from './TransactionItem';
 export { CategoryPicker } from './CategoryPicker';
+export { CategoryWheel } from './CategoryWheel';
 export { DatePickerWheel } from './DatePickerWheel';
 export { ScenicBanner } from './ScenicBanner';
 export { CategoryGlyph } from './CategoryGlyph';

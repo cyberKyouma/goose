@@ -1,6 +1,6 @@
 // 主界面(图1): 本周支出横幅 + 按日流水 + 底部「图表|流水|记一笔」
 import React, { useCallback, useMemo, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, Pressable, Alert, TextInput } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Pressable, Alert, TextInput, Modal } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -50,6 +50,7 @@ export const HomeScreen: React.FC = () => {
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState('');
+  const [serviceOpen, setServiceOpen] = useState(false);
 
   const summary = useMemo(() => {
     const now = new Date();
@@ -227,38 +228,50 @@ export const HomeScreen: React.FC = () => {
     <View style={styles.container}>
       <SafeAreaView edges={['top']} style={styles.safeTop}>
         <View style={styles.topBar}>
-          <Text style={styles.brand}>Goose</Text>
+          <View style={styles.topSpacer} />
           <Pressable
-            onPress={() => {
-              setSearchOpen((v) => {
-                if (v) setQuery('');
-                return !v;
-              });
-            }}
+            onPress={() => setServiceOpen(true)}
             hitSlop={8}
-            style={styles.iconBtn}
+            style={styles.serviceBtn}
             accessibilityRole="button"
-            accessibilityLabel={searchOpen ? '关闭搜索' : '搜索'}
+            accessibilityLabel="服务"
           >
-            <Feather
-              name="search"
-              size={20}
-              color={searchOpen ? theme.colors.accent : theme.colors.text}
-            />
+            <View style={styles.serviceIcon}>
+              <View style={styles.serviceDots}>
+                <View style={styles.serviceDot} />
+                <View style={styles.serviceDot} />
+                <View style={styles.serviceDot} />
+                <View style={styles.serviceDot} />
+              </View>
+              <View style={styles.serviceBadge} />
+            </View>
+            <Text style={styles.serviceLabel}>服务</Text>
           </Pressable>
         </View>
         {searchOpen ? (
-          <TextInput
-            style={styles.search}
-            value={query}
-            onChangeText={(text) => {
-              setQuery(text);
-              setVisibleCount(PAGE_SIZE);
-            }}
-            placeholder="搜索分类、备注或金额"
-            placeholderTextColor={theme.colors.textPlaceholder}
-            autoFocus
-          />
+          <View style={styles.searchRow}>
+            <TextInput
+              style={styles.search}
+              value={query}
+              onChangeText={(text) => {
+                setQuery(text);
+                setVisibleCount(PAGE_SIZE);
+              }}
+              placeholder="搜索分类、备注或金额"
+              placeholderTextColor={theme.colors.textPlaceholder}
+              autoFocus
+            />
+            <Pressable
+              onPress={() => {
+                setQuery('');
+                setSearchOpen(false);
+              }}
+              hitSlop={8}
+              accessibilityLabel="关闭搜索"
+            >
+              <Text style={styles.searchClose}>取消</Text>
+            </Pressable>
+          </View>
         ) : null}
       </SafeAreaView>
       <FlatList
@@ -316,6 +329,43 @@ export const HomeScreen: React.FC = () => {
       <SafeAreaView edges={['bottom']} style={styles.safeBottom}>
         <HomeBottomBar />
       </SafeAreaView>
+      <Modal visible={serviceOpen} transparent animationType="fade" onRequestClose={() => setServiceOpen(false)}>
+        <Pressable style={styles.serviceOverlay} onPress={() => setServiceOpen(false)}>
+          <Pressable style={styles.serviceSheet} onPress={(e) => e.stopPropagation()}>
+            <Text style={styles.serviceTitle}>服务</Text>
+            <Pressable
+              style={styles.serviceRow}
+              onPress={() => {
+                setServiceOpen(false);
+                setSearchOpen(true);
+              }}
+            >
+              <Feather name="search" size={18} color={theme.colors.text} />
+              <Text style={styles.serviceRowText}>搜索流水</Text>
+            </Pressable>
+            <Pressable
+              style={styles.serviceRow}
+              onPress={() => {
+                setServiceOpen(false);
+                navigation.navigate('Categories');
+              }}
+            >
+              <Feather name="grid" size={18} color={theme.colors.text} />
+              <Text style={styles.serviceRowText}>分类管理</Text>
+            </Pressable>
+            <Pressable
+              style={styles.serviceRow}
+              onPress={() => {
+                setServiceOpen(false);
+                navigation.navigate('Settings');
+              }}
+            >
+              <Feather name="settings" size={18} color={theme.colors.text} />
+              <Text style={styles.serviceRowText}>设置</Text>
+            </Pressable>
+          </Pressable>
+        </Pressable>
+      </Modal>
     </View>
   );
 };
@@ -325,23 +375,71 @@ const styles = StyleSheet.create({
   safeTop: { backgroundColor: theme.colors.page },
   safeBottom: { backgroundColor: theme.colors.page },
   topBar: {
-    height: theme.layout.topBarHeight,
-    paddingHorizontal: theme.spacing.sm,
+    height: 52,
+    paddingHorizontal: 14,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
   },
-  brand: {
+  topSpacer: { flex: 1 },
+  serviceBtn: { alignItems: 'center', minWidth: 36 },
+  serviceIcon: { width: 26, height: 22, alignItems: 'center', justifyContent: 'center' },
+  serviceDots: { width: 16, height: 16, flexDirection: 'row', flexWrap: 'wrap', gap: 3 },
+  serviceDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: '#3A3A3A' },
+  serviceBadge: {
+    position: 'absolute',
+    top: -2,
+    right: -2,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#FF3B30',
+    borderWidth: 1,
+    borderColor: '#FFFFFF',
+  },
+  serviceLabel: { marginTop: 1, fontSize: 10, lineHeight: 13, color: '#3A3A3A' },
+  serviceOverlay: {
     flex: 1,
-    ...theme.typography.title,
-    fontWeight: '700',
-    color: theme.colors.text,
-    paddingLeft: theme.spacing.sm,
+    backgroundColor: 'rgba(0,0,0,0.25)',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-end',
+    paddingTop: 72,
+    paddingRight: 12,
   },
-  iconBtn: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
-  search: {
+  serviceSheet: {
+    width: 196,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    paddingVertical: 8,
+    shadowColor: '#000',
+    shadowOpacity: 0.12,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 8,
+  },
+  serviceTitle: {
+    ...theme.typography.caption,
+    color: theme.colors.textMuted,
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+  },
+  serviceRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+  serviceRowText: { ...theme.typography.body, color: theme.colors.text },
+  searchRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
     marginHorizontal: theme.layout.pagePadding,
     marginBottom: theme.spacing.sm,
+    gap: 10,
+  },
+  search: {
+    flex: 1,
     height: 36,
     borderRadius: 18,
     backgroundColor: theme.colors.surfaceMuted,
@@ -350,9 +448,10 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     color: theme.colors.text,
   },
+  searchClose: { ...theme.typography.label, color: theme.colors.accent },
   listContent: { paddingBottom: 8 },
   bannerLabel: bannerText.label,
-  bannerMainRow: { flexDirection: 'row', alignItems: 'center', marginTop: 2 },
+  bannerMainRow: { flexDirection: 'row', alignItems: 'center', marginTop: 0 },
   bannerAmount: bannerText.amount,
   eyeBtn: {
     marginLeft: theme.spacing.sm,
@@ -374,9 +473,10 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.page,
   },
   dayTitle: {
-    ...theme.typography.label,
-    fontWeight: '400',
-    color: theme.colors.textSecondary,
+    fontSize: 15,
+    lineHeight: 20,
+    fontWeight: '500',
+    color: '#3A3A3A',
   },
   dayTotals: { flexDirection: 'row', alignItems: 'center', gap: 14 },
   totalPair: { flexDirection: 'row', alignItems: 'center', gap: 5 },

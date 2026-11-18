@@ -9,6 +9,7 @@ interface ScenicBannerProps {
   height?: number;
   children?: React.ReactNode;
   style?: ViewStyle;
+  contentStyle?: ViewStyle;
 }
 
 const HillArt: React.FC = () => (
@@ -116,6 +117,7 @@ export const ScenicBanner: React.FC<ScenicBannerProps> = ({
   height = theme.layout.bannerHeight,
   children,
   style,
+  contentStyle,
 }) => (
   <View style={[styles.wrap, { height }, style]}>
     <Svg
@@ -127,7 +129,7 @@ export const ScenicBanner: React.FC<ScenicBannerProps> = ({
     >
       {variant === 'lake' ? <LakeArt /> : <HillArt />}
     </Svg>
-    <View style={styles.content}>{children}</View>
+    <View style={[styles.content, contentStyle]}>{children}</View>
   </View>
 );
 

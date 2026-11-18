@@ -1,7 +1,9 @@
 // 设置页面 - 云端同步配置
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Switch, Alert, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Switch, Alert, TouchableOpacity, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
+import { Feather } from '@expo/vector-icons';
 import { Card, Button, Input } from '../components';
 import { theme } from '../theme';
 
@@ -22,6 +24,7 @@ interface CloudConfig {
 }
 
 export const SettingsScreen: React.FC = () => {
+  const navigation = useNavigation();
   const [cloudConfig, setCloudConfig] = useState<CloudConfig>({
     type: 'none',
     enabled: false,
@@ -89,7 +92,11 @@ export const SettingsScreen: React.FC = () => {
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* 顶部标题 */}
         <View style={styles.header}>
+          <Pressable onPress={() => navigation.goBack()} style={styles.backBtn} accessibilityLabel="返回">
+            <Feather name="chevron-left" size={26} color={theme.colors.text} />
+          </Pressable>
           <Text style={styles.title}>设置</Text>
+          <View style={styles.backBtn} />
         </View>
         
         {/* 云端同步 */}
@@ -234,13 +241,16 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.light,
   },
   header: {
-    paddingHorizontal: theme.spacing.md,
-    paddingVertical: theme.spacing.md,
+    height: theme.layout.topBarHeight,
+    paddingHorizontal: theme.spacing.sm,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
+  backBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
   title: {
-    fontSize: theme.fontSize.xxl,
-    fontWeight: 'bold',
-    color: theme.colors.dark,
+    ...theme.typography.title,
+    color: theme.colors.text,
   },
   section: {
     marginHorizontal: theme.spacing.md,

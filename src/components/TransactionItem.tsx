@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 12,
+    paddingVertical: 14,
     paddingHorizontal: theme.layout.pagePadding,
     backgroundColor: theme.colors.page,
     gap: 12,

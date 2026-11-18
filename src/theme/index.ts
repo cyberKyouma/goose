@@ -23,10 +23,10 @@ const type = (
 
 export const theme = {
   colors: {
-    primary: '#FF8A34',
-    secondary: '#FF8A34',
-    accent: '#FF8A34',
-    success: '#2EBE6E',
+    primary: '#FF8C2A',
+    secondary: '#FFB020',
+    accent: '#FF8C2A',
+    success: '#1DB27E',
     danger: '#F04452',
     warning: '#F5A524',
     info: '#5B8DEF',
@@ -37,7 +37,7 @@ export const theme = {
     border: '#EEEEEE',
 
     income: '#F04452',
-    expense: '#2EBE6E',
+    expense: '#1DB27E',
     headerBg: '#6E8B78',
 
     // 文字层级 (避免各页散落 #222 / #999 / #AAA)
@@ -56,8 +56,8 @@ export const theme = {
     divider: '#F2F2F2',
 
     categoryColors: [
-      '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0',
-      '#9966FF', '#FF9F40', '#FF6384', '#C9CBCF',
+      '#F26D9A', '#F5A14A', '#F0C84A', '#8ED36A',
+      '#3DC6B5', '#6AA6F5', '#C084FC', '#F07167',
     ],
   },
 
@@ -97,22 +97,22 @@ export const theme = {
     body: type({ fontSize: 15, lineHeight: 22, fontWeight: '400' }),
     bodyStrong: type({ fontSize: 15, lineHeight: 22, fontWeight: '600' }),
     listTitle: type({ fontSize: 16, lineHeight: 22, fontWeight: '400' }),
-    listAmount: type({ fontSize: 16, lineHeight: 22, fontWeight: '500' }),
+    listAmount: type({ fontSize: 18, lineHeight: 24, fontWeight: '400' }),
     title: type({ fontSize: 17, lineHeight: 24, fontWeight: '600' }),
-    headline: type({ fontSize: 22, lineHeight: 28, fontWeight: '700' }),
-    section: type({ fontSize: 26, lineHeight: 32, fontWeight: '700' }),
-    hero: type({ fontSize: 36, lineHeight: 44, fontWeight: '600' }),
-    display: type({ fontSize: 48, lineHeight: 56, fontWeight: '500' }),
+    headline: type({ fontSize: 22, lineHeight: 28, fontWeight: '500' }),
+    section: type({ fontSize: 26, lineHeight: 32, fontWeight: '600' }),
+    hero: type({ fontSize: 40, lineHeight: 48, fontWeight: '300' }),
+    display: type({ fontSize: 52, lineHeight: 60, fontWeight: '300' }),
   },
 
   // 布局规格: 横幅、顶栏、列表图标统一尺寸
   layout: {
-    bannerHeight: 156,
-    topBarHeight: 44,
+    bannerHeight: 196,
+    topBarHeight: 48,
     pagePadding: 16,
-    listIconSize: 34,
-    listDividerInset: 62,
-    tabBarHeight: 72,
+    listIconSize: 38,
+    listDividerInset: 66,
+    tabBarHeight: 64,
   },
 
   shadow: {
@@ -135,7 +135,7 @@ export const bannerText = {
   amount: {
     color: theme.colors.textOnDark,
     ...theme.typography.hero,
-    letterSpacing: 0.2,
+    letterSpacing: 0,
     fontVariant: ['tabular-nums'] as TextStyle['fontVariant'],
     textShadowColor: 'rgba(0,0,0,0.28)',
     textShadowOffset: { width: 0, height: 1 },
@@ -150,7 +150,7 @@ export const bannerText = {
   subStrong: {
     fontFamily: fonts.regular,
     color: theme.colors.textOnDark,
-    fontWeight: '700' as const,
+    fontWeight: '500' as const,
   } satisfies TextStyle,
   meta: {
     color: theme.colors.textOnDarkMuted,

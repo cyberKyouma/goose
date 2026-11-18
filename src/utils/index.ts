@@ -105,35 +105,59 @@ export const formatDayHeading = (ymd: string): string => {
   return `${day}日 / ${WEEKDAYS[date.getDay()]}`;
 };
 
+/** 账本尚未拆账户时,流水展示用的默认账户名。 */
+export const DEFAULT_ACCOUNT_NAME = '现金';
+
+/** 把十六进制色和白色混合。whiteRatio 越大越浅。 */
+export const mixWithWhite = (hex: string, whiteRatio: number): string => {
+  const raw = hex.replace('#', '');
+  const full = raw.length === 3 ? raw.split('').map((c) => c + c).join('') : raw;
+  if (full.length < 6 || /[^0-9a-f]/i.test(full.slice(0, 6))) return '#F3F4F4';
+  const n = parseInt(full.slice(0, 6), 16);
+  const mix = (c: number) => Math.round(c * (1 - whiteRatio) + 255 * whiteRatio);
+  const h = (c: number) => mix(c).toString(16).padStart(2, '0');
+  return `#${h((n >> 16) & 255)}${h((n >> 8) & 255)}${h(n & 255)}`;
+};
+
 const NAME_VISUAL: Record<string, { icon: string; color: string }> = {
-  早餐: { icon: '🥣', color: '#F0B42A' },
-  午餐: { icon: '🍜', color: '#F0B42A' },
-  中餐: { icon: '🍜', color: '#F0B42A' },
-  晚餐: { icon: '🍜', color: '#F0B42A' },
-  夜宵: { icon: '🍜', color: '#F0B42A' },
-  饮料: { icon: '🧋', color: '#F0B42A' },
+  早餐: { icon: '🥣', color: '#F5B942' },
+  午餐: { icon: '🍜', color: '#F5A14A' },
+  中餐: { icon: '🍜', color: '#F5A14A' },
+  晚餐: { icon: '🍜', color: '#F5A14A' },
+  夜宵: { icon: '🍜', color: '#F5A14A' },
+  饮料: { icon: '🧋', color: '#F5A14A' },
   水果: { icon: '🍓', color: '#F0786A' },
-  打车: { icon: '🚗', color: '#8B7CF6' },
-  公交: { icon: '🚌', color: '#8B7CF6' },
-  地铁: { icon: '🚇', color: '#5B8DEF' },
-  油费: { icon: '⛽', color: '#8B7CF6' },
-  停车: { icon: '🅿️', color: '#8B7CF6' },
-  高铁: { icon: '🚄', color: '#5B8DEF' },
+  吃: { icon: '🍜', color: '#F5A14A' },
+  打车: { icon: '🚗', color: '#8ED36A' },
+  公交: { icon: '🚌', color: '#7ED07A' },
+  地铁: { icon: '🚇', color: '#7ED07A' },
+  公交地铁: { icon: '🚇', color: '#7ED07A' },
+  油费: { icon: '⛽', color: '#8ED36A' },
+  停车: { icon: '🅿️', color: '#8ED36A' },
+  高铁: { icon: '🚄', color: '#6FCF97' },
+  飞机火车: { icon: '✈️', color: '#6FCF97' },
+  共享单车: { icon: '🚲', color: '#7ED07A' },
   水电: { icon: '💧', color: '#4C9BFF' },
   水电煤: { icon: '💧', color: '#4C9BFF' },
-  房租: { icon: '🏠', color: '#2EBE9A' },
-  餐饮: { icon: '🍜', color: '#FF5C8A' },
-  交通: { icon: '🚗', color: '#7BC142' },
-  购物: { icon: '🛍️', color: '#F5B400' },
-  居住: { icon: '🏠', color: '#2EBE9A' },
-  娱乐: { icon: '🎬', color: '#D946EF' },
-  医疗: { icon: '💊', color: '#EF5350' },
-  教育: { icon: '📚', color: '#5B8DEF' },
-  其他支出: { icon: '📦', color: '#90A4AE' },
+  房租: { icon: '🏠', color: '#5BBEB6' },
+  日用: { icon: '🏠', color: '#F07A8A' },
+  日用品: { icon: '🏠', color: '#F07A8A' },
+  充值: { icon: '💳', color: '#3EC6C0' },
+  餐饮: { icon: '🍜', color: '#F5A14A' },
+  交通: { icon: '🚇', color: '#8ED36A' },
+  购物: { icon: '🛍️', color: '#F26D9A' },
+  花钱: { icon: '🛍️', color: '#F26D9A' },
+  居住: { icon: '🏠', color: '#5BBEB6' },
+  娱乐: { icon: '🎬', color: '#C084FC' },
+  医疗: { icon: '💊', color: '#F07167' },
+  教育: { icon: '📚', color: '#6AA6F5' },
+  其他: { icon: '✏️', color: '#F0C84A' },
+  其他支出: { icon: '✏️', color: '#F0C84A' },
+  金融: { icon: '¥', color: '#3DC6B5' },
   工资: { icon: '👜', color: '#F0A202' },
   月薪: { icon: '👜', color: '#F0A202' },
   奖金: { icon: '🎁', color: '#FF9F43' },
-  投资: { icon: '📈', color: '#26A69A' },
+  投资: { icon: '📈', color: '#3DC6B5' },
   其他收入: { icon: '💵', color: '#78909C' },
 };
 
@@ -162,7 +186,7 @@ export const describeTransaction = (
     ? categories.find((c) => c.id === sub.categoryId)
     : categories.find((c) => c.id === tx.subCategoryId);
   const title = sub?.name || category?.name || '未分类';
-  const visual = visualForName(title, sub?.icon || category?.icon || '💰', category?.color || '#FF8A34');
+  const visual = visualForName(title, sub?.icon || category?.icon || '💰', category?.color || '#1DB27E');
   return {
     title,
     parentName: category?.name || '未分类',

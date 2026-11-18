@@ -8,6 +8,7 @@ import { TransactionsScreen } from '../screens/TransactionsScreen';
 import { AddTransactionScreen } from '../screens/AddTransactionScreen';
 import { ChartsScreen } from '../screens/ChartsScreen';
 import { CategoriesScreen } from '../screens/CategoriesScreen';
+import { SettingsScreen } from '../screens/SettingsScreen';
 
 export type RootStackParamList = {
   Home: undefined;
@@ -15,6 +16,7 @@ export type RootStackParamList = {
   Transactions: undefined;
   AddTransaction: { editingId?: string } | undefined;
   Categories: undefined;
+  Settings: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -34,6 +36,7 @@ export const AppNavigator: React.FC = () => (
         }}
       />
       <Stack.Screen name="Categories" component={CategoriesScreen} options={{ presentation: 'card' }} />
+      <Stack.Screen name="Settings" component={SettingsScreen} options={{ presentation: 'card' }} />
     </Stack.Navigator>
   </NavigationContainer>
 );
